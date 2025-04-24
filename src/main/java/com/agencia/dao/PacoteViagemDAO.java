@@ -2,6 +2,10 @@ package com.agencia.dao;
 
 import com.agencia.model.PacoteViagem;
 import com.agencia.util.Conexao;
+import com.agencia.model.Cliente;
+import com.agencia.model.ClienteNacional;
+import com.agencia.model.ClienteEstrangeiro;
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -94,5 +98,61 @@ public class PacoteViagemDAO {
         }
 
         return pacote;
+    }
+    public List<Cliente> listarClientesPorPacote(int idPacote) {
+        List<Cliente> clientes = new ArrayList<>();
+        String sql =
+                "SELECT c.id, c.nome, c.telefone, c.email, " +
+                        "       cn.cpf, ce.passaporte " +
+                        "FROM cliente c " +
+                        "LEFT JOIN cliente_nacional cn ON c.id = cn.id_cliente " +
+                        "LEFT JOIN cliente_estrangeiro ce ON c.id = ce.id_cliente " +
+                        "JOIN cliente_pacote cp ON c.id = cp.id_cliente " +
+                        "WHERE cp.id_pacote = ?";
+
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idPacote);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Cliente cliente;
+
+                if (rs.getString("cpf") != null) {
+                    cliente = new ClienteNacional(
+                            rs.getString("nome"),
+                            rs.getString("telefone"),
+                            rs.getString("email"),
+                            rs.getString("cpf")
+                    );
+                } else {
+                    cliente = new ClienteEstrangeiro(
+                            rs.getString("nome"),
+                            rs.getString("telefone"),
+                            rs.getString("email"),
+                            rs.getString("passaporte")
+                    );
+                }
+
+                cliente.setId(rs.getInt("id"));
+                clientes.add(cliente);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return clientes;
+    }
+
+    public void adicionarServicoAoPacote(int idPacote, int idServico) {
+        String sql = "INSERT INTO pacote_servico (id_pacote, id_servico) VALUES (?, ?)";
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idPacote);
+            stmt.setInt(2, idServico);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

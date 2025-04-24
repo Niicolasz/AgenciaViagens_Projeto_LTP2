@@ -4,6 +4,7 @@ import com.agencia.model.Cliente;
 import com.agencia.model.ClienteEstrangeiro;
 import com.agencia.model.ClienteNacional;
 import com.agencia.util.Conexao;
+import com.agencia.model.PacoteViagem;
 
 
 import java.sql.Connection;
@@ -128,6 +129,52 @@ public class ClienteDAO {
 
         } catch (SQLException e) {
             System.out.println("Erro ao excluir cliente: " + e.getMessage());
+        }
+    }
+    public void contratarPacote(int idCliente, int idPacote) {
+        String sql = "INSERT INTO cliente_pacote (id_cliente, id_pacote) VALUES (?, ?)";
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idCliente);
+            stmt.setInt(2, idPacote);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public List<PacoteViagem> listarPacotesPorCliente(int idCliente) {
+        List<PacoteViagem> pacotes = new ArrayList<>();
+        String sql = "SELECT p.* FROM pacote_viagem p JOIN cliente_pacote cp ON p.id = cp.id_pacote WHERE cp.id_cliente = ?";
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idCliente);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                PacoteViagem pacote = new PacoteViagem();
+                pacote.setId(rs.getInt("id"));
+                pacote.setNome(rs.getString("Nome"));
+                pacote.setDestino(rs.getString("destino"));
+                pacote.setDuracao(rs.getInt("duracao"));
+                pacote.setPreco(rs.getDouble("preco"));
+                pacote.setTipo(rs.getString("tipo"));
+                pacotes.add(pacote);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pacotes;
+    }
+    public boolean associarClientePacote(int clienteId, int pacoteId) {
+        String sql = "INSERT INTO cliente_pacote (id_cliente, id_pacote) VALUES (?, ?)";
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, clienteId);
+            stmt.setInt(2, pacoteId);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Erro ao associar cliente ao pacote: " + e.getMessage());
+            return false;
         }
     }
 
