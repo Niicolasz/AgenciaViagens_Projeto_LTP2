@@ -8,14 +8,18 @@ CREATE TABLE cliente (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     telefone VARCHAR(20),
-    email VARCHAR(100),
-    tipo ENUM('NACIONAL', 'ESTRANGEIRO') NOT NULL
+	email VARCHAR(100),
+    tipo ENUM('NACIONAL', 'ESTRANGEIRO') NOT NULL,
+    cpf VARCHAR(14),
+    passaporte VARCHAR(14)
 );
 
 -- Pacotes de viagem
 CREATE TABLE pacote_viagem (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
     destino VARCHAR(100) NOT NULL,
+    duracao VARCHAR(10) NOT NULL,
     preco DECIMAL(10, 2) NOT NULL,
     tipo TEXT
 );
@@ -25,7 +29,6 @@ CREATE TABLE pacote_viagem (
 CREATE TABLE servico_adicional (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    descricao TEXT,
     preco DECIMAL(10, 2) NOT NULL
 );
 
@@ -54,7 +57,6 @@ select*from pacote_viagem;
 select*from servico_adicional;
 select*from cliente_pacote;
 select*from pacote_servico;
-
 
 
 
