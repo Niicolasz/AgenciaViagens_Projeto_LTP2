@@ -11,22 +11,6 @@ CREATE TABLE cliente (
     tipo ENUM('NACIONAL', 'ESTRANGEIRO') NOT NULL
 );
 
--- Cliente Nacional
-CREATE TABLE cliente_nacional (
-    id_cliente INT PRIMARY KEY,
-    cpf VARCHAR(14) UNIQUE NOT NULL,
-    rg VARCHAR(20),
-    FOREIGN KEY (id_cliente) REFERENCES cliente(id)
-);
-
--- Cliente Estrangeiro
-CREATE TABLE cliente_estrangeiro (
-    id_cliente INT PRIMARY KEY,
-    passaporte VARCHAR(20) UNIQUE NOT NULL,
-    pais_origem VARCHAR(50),
-    FOREIGN KEY (id_cliente) REFERENCES cliente(id)
-);
-
 -- Pacotes de viagem
 CREATE TABLE pacote_viagem (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -62,6 +46,7 @@ CREATE TABLE pacote_servico (
     FOREIGN KEY (id_pacote) REFERENCES pacote_viagem(id),
     FOREIGN KEY (id_servico) REFERENCES servico_adicional(id)
 );
+select*from cliente;
 select*from pacote_viagem;
 select*from servico_adicional;
 select*from cliente_pacote;
