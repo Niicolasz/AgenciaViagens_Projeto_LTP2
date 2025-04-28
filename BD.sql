@@ -1,4 +1,5 @@
 -- Cria o banco
+DROP DATABASE IF EXISTS agencia_viagens;
 CREATE DATABASE agencia_viagens;
 USE agencia_viagens;
 
@@ -46,11 +47,14 @@ CREATE TABLE pacote_servico (
     FOREIGN KEY (id_pacote) REFERENCES pacote_viagem(id),
     FOREIGN KEY (id_servico) REFERENCES servico_adicional(id)
 );
+SET SQL_SAFE_UPDATES = 0;
+
 select*from cliente;
 select*from pacote_viagem;
 select*from servico_adicional;
 select*from cliente_pacote;
 select*from pacote_servico;
+
 
 
 
